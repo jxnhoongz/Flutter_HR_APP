@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:hr_app/ViewModels/loginModel.dart';
 
-import 'Screens/dashboard.dart';
 import 'Screens/loginScreen.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,9 +13,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: "HR_APP",
-      home: LoginScreen(),
+    return ChangeNotifierProvider(
+      create: (context) => LoginModel(),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: LoginScreen(),
+      ),
     );
   }
 }

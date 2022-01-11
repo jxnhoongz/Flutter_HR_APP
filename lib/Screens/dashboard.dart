@@ -17,7 +17,7 @@ class _dashboardState extends State<dashboard> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Dashboard')),
-      backgroundColor: appBackgroundColor,
+      backgroundColor: purpleHaze,
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,

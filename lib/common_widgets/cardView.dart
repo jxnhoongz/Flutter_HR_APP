@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:hr_app/Utilities/appTheme.dart';
 
-class cardView extends StatelessWidget {  
-
+class cardView extends StatelessWidget {
   cardView({
     required this.iconPath,
     required this.boarderRadius,
     required this.title,
     required this.width,
     required this.height,
+    //required this.onPressed,
   });
 
   final String iconPath;
