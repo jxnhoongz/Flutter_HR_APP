@@ -24,25 +24,30 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   TextEditingController _emailController = new TextEditingController();
   TextEditingController _passwordController = new TextEditingController();
-
+  bool rememberMe = false;
+  bool isLoggedIn = false;
   login(email, password) async {
     Map data = {
-      'empemail': '${_emailController.text}',
-      'password': '${_passwordController.text}',
+      'empemail': email,
+      'password': password,
     };
 
     var body = jsonEncode(data);
 
-    print(data.toString());
+    //print(data.toString());
 
     final response = await http.post(Uri.parse(LOGIN), body: body);
 
     if (response.statusCode == 202) {
-      Map<String, dynamic> responseBody = jsonDecode(response.body);
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      if (rememberMe) {
+        preferences.setString('email', _emailController.text);
+      }
 
-      Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (BuildContext context) => dashboard()),
-          (Route<dynamic> route) => false);
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => dashboard()),
+          (route) => false);
 
       //Fluttertoast.showToast(msg: responseBody.toString(), fontSize: 18);
     } else {
@@ -57,6 +62,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final size = MediaQuery.of(context).size;
     final bool keyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
     final model = Provider.of<LoginModel>(context);
+
     return Scaffold(
       backgroundColor: white,
       body: Stack(
@@ -68,7 +74,7 @@ class _LoginScreenState extends State<LoginScreen> {
           AnimatedPositioned(
             duration: Duration(milliseconds: 500),
             curve: Curves.easeOutQuad,
-            top: keyboardOpen ? -size.height / 3.7 : 0.0,
+            top: keyboardOpen ? -size.height / 4.2 : 0.0,
             child: WaveWidget(
               size: size,
               yOffset: size.height / 3.0,
@@ -76,14 +82,14 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 100.0),
+            padding: const EdgeInsets.only(top: 120.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Text(
                   'Login',
                   style: TextStyle(
-                    color: white,
+                    color: keyboardOpen ? mediumBlue : white,
                     fontSize: 40.0,
                     fontWeight: FontWeight.w900,
                   ),
@@ -91,6 +97,17 @@ class _LoginScreenState extends State<LoginScreen> {
               ],
             ),
           ),
+          // Padding(
+          //   padding: const EdgeInsets.only(top: 350),
+          //   child: Row(
+          //     mainAxisAlignment: MainAxisAlignment.center,
+          //     children: <Widget>[
+          //       Image.asset(
+          //         'assets/icons/dp_logo.jpg',
+          //       )
+          //     ],
+          //   ),
+          // ),
           Padding(
             padding: const EdgeInsets.all(30.0),
             child: Column(
@@ -125,11 +142,40 @@ class _LoginScreenState extends State<LoginScreen> {
                     SizedBox(
                       height: 10.0,
                     ),
-                    Text(
-                      'Forgot password?',
-                      style: TextStyle(
-                        color: mediumBlue,
-                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Checkbox(
+                              value: rememberMe,
+                              onChanged: (bool? value) {
+                                setState(() {
+                                  rememberMe = value!;
+                                  //print('remember me is $rememberMe');
+                                });
+                              },
+                              hoverColor: mediumBlue,
+                              activeColor: mediumBlue,
+                            ),
+                            Text(
+                              'Remember me',
+                              style: TextStyle(
+                                color: mediumBlue,
+                                fontSize: 14,
+                              ),
+                            )
+                          ],
+                        ),
+                        Text(
+                          'Forgot password?',
+                          style: TextStyle(
+                            color: mediumBlue,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),

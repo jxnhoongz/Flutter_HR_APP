@@ -16,15 +16,12 @@ class LoginModel extends ChangeNotifier {
   get isValid => _isValid;
   bool _isValid = false;
   void isValidEmail(String input) async {
-    Map data = {
-      'empemail': input,
-      'password': '123',
-    };
+    Map data = {'empemail': input};
     var body = jsonEncode(data);
-    final response = await http.post(Uri.parse(LOGIN), body: body);
+    final response = await http.post(Uri.parse(verifyEmail), body: body);
 
     //if response is 203 -> wrong password which means email is correct
-    if (response.statusCode == 203 || response.statusCode == 202) {
+    if (response.statusCode == 202) {
       _isValid = true;
     } else {
       _isValid = false;

@@ -8,7 +8,7 @@ class TextFieldWidget extends StatelessWidget {
   final String? hintText;
   final IconData? prefixIconData;
   final IconData? suffixIconData;
-  final bool obscureText;
+  final bool obscureText; //used to hide text in password field(if true)
   final TextEditingController controller;
   final Function(String value) onChanged;
 
