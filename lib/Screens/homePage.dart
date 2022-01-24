@@ -1,153 +1,253 @@
+import 'dart:convert';
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
+import 'package:hr_app/Utilities/API.dart';
+import 'package:http/http.dart' as http;
 import 'package:hr_app/Utilities/appTheme.dart';
 import 'package:hr_app/common_widgets/cardView.dart';
-import 'leaveScreen.dart';
+import 'package:hr_app/common_widgets/dashboardItems.dart';
+import 'package:http/retry.dart';
 
-class homePage extends StatelessWidget {
+class homePage extends StatefulWidget {
   const homePage({Key? key}) : super(key: key);
+
+  @override
+  State<homePage> createState() => _homePageState();
+}
+
+class _homePageState extends State<homePage> {
+  getImage(modulename) async {
+    String imgURL;
+    Map data = {
+      'modulename': modulename,
+    };
+
+    var body = jsonEncode(data);
+
+    final response = await http.post(Uri.parse(ImageUrl), body: body);
+    imgURL = jsonDecode(response.body).toString();
+    return imgURL;
+  }
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Column(
         children: [
-          //Top text
           Container(
-            height: 155,
-            alignment: Alignment.topLeft,
-            padding: EdgeInsets.all(35),
+            height: 230,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                SizedBox(
+                  height: 20,
+                ),
+                CircleAvatar(
+                  radius: 50.0,
+                  backgroundImage: AssetImage('assets/icons/user.png'),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
                 Text(
-                  'Welcome back',
-                  style: Ktextstyle,
-                ),
-                Text(
-                  'VATANA!',
-                  style: Ktextstyle,
-                ),
-              ],
-            ),
-          ),
-
-          //cards
-          Container(
-            padding: EdgeInsets.fromLTRB(50, 0, 0, 0),
-            child: Row(
-              children: [
-                cardView(
-                  height: 111,
-                  width: 111,
-                  boarderRadius: 10,
-                  iconPath: performanceImgPath,
-                  title: performanceTitle,
-                ),
-                SizedBox(
-                  width: 64,
-                ),
-                cardView(
-                  height: 111,
-                  width: 111,
-                  boarderRadius: 10,
-                  iconPath: timeSheetImgPath,
-                  title: timeSheetTitle,
-                ),
-              ],
-            ),
-          ),
-          SizedBox(
-            height: 45,
-          ),
-          Container(
-            padding: EdgeInsets.fromLTRB(50, 0, 0, 0),
-            child: Row(
-              children: [
-                cardView(
-                  height: 111,
-                  width: 111,
-                  boarderRadius: 10,
-                  iconPath: recruitmentImgPath,
-                  title: recruitmentTitle,
-                ),
-                SizedBox(
-                  width: 64,
-                ),
-                cardView(
-                  height: 111,
-                  width: 111,
-                  boarderRadius: 10,
-                  iconPath: attendanceImgPath,
-                  title: attendanceTitle,
-                ),
-              ],
-            ),
-          ),
-          SizedBox(
-            height: 45,
-          ),
-          Container(
-            padding: EdgeInsets.fromLTRB(50, 0, 0, 0),
-            child: Row(
-              children: [
-                cardView(
-                  height: 111,
-                  width: 111,
-                  boarderRadius: 10,
-                  iconPath: learningImgPath,
-                  title: learningTitle,
-                ),
-                SizedBox(
-                  width: 64,
-                ),
-                cardView(
-                  height: 111,
-                  width: 111,
-                  boarderRadius: 10,
-                  iconPath: salaryImgPath,
-                  title: salaryTitle,
-                ),
-              ],
-            ),
-          ),
-          SizedBox(
-            height: 45,
-          ),
-          Container(
-            padding: EdgeInsets.fromLTRB(50, 0, 0, 0),
-            child: Row(
-              children: [
-                InkWell(
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                          builder: (BuildContext context) => LeaveScreen()),
-                    );
-                  },
-                  child: cardView(
-                    height: 111,
-                    width: 111,
-                    boarderRadius: 10,
-                    iconPath: leaveImgPath,
-                    title: leaveTitle,
+                  'USERNAME',
+                  style: TextStyle(
+                    fontSize: 25,
+                    color: white,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
                 SizedBox(
-                  width: 64,
+                  height: 3,
                 ),
-                cardView(
-                  height: 111,
-                  width: 111,
-                  boarderRadius: 10,
-                  iconPath: travelImgPath,
-                  title: travelTitle,
+                Text(
+                  'title',
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: white,
+                  ),
                 ),
               ],
             ),
           ),
-          SizedBox(
-            height: 50,
-          )
+          Container(
+            margin: EdgeInsets.fromLTRB(12, 0, 12, 0),
+            padding: EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(25),
+                topRight: Radius.circular(25),
+              ),
+            ),
+            child: Column(
+              children: [
+                SizedBox(
+                  height: 25,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Spacer(
+                      flex: 1,
+                    ),
+                    FutureBuilder(
+                      future: getImage('Leave'),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          return dbItem(
+                            iconPath: snapshot.data.toString(),
+                            title: 'Leave',
+                            BgColor: Colors.cyan,
+                          );
+                        } else {
+                          return Text('Loading');
+                        }
+                      },
+                    ),
+                    Spacer(
+                      flex: 1,
+                    ),
+                    FutureBuilder(
+                        future: getImage('attendant'),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return dbItem(
+                              iconPath: snapshot.data.toString(),
+                              title: 'Attendance',
+                              BgColor: Colors.blueAccent,
+                            );
+                          } else {
+                            return Text('Loading');
+                          }
+                        }),
+                    Spacer(
+                      flex: 1,
+                    ),
+                    FutureBuilder(
+                        future: getImage('Salary'),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return dbItem(
+                              iconPath: snapshot.data.toString(),
+                              title: 'Salary',
+                              BgColor: Colors.amber,
+                            );
+                          } else {
+                            return Text('Loading');
+                          }
+                        }),
+                    Spacer(
+                      flex: 1,
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 25,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Spacer(
+                      flex: 1,
+                    ),
+                    FutureBuilder(
+                        future: getImage('Recruitement'),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return dbItem(
+                              iconPath: snapshot.data.toString(),
+                              title: 'Recruitment',
+                              BgColor: Colors.lightGreen,
+                            );
+                          } else {
+                            return Text('Loading');
+                          }
+                        }),
+                    Spacer(
+                      flex: 1,
+                    ),
+                    FutureBuilder(
+                        future: getImage('Time Sheet'),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return dbItem(
+                              iconPath: snapshot.data.toString(),
+                              title: 'Time Sheet',
+                              BgColor: Colors.pinkAccent,
+                            );
+                          } else {
+                            return Text('Loading');
+                          }
+                        }),
+                    Spacer(
+                      flex: 1,
+                    ),
+                    FutureBuilder(
+                        future: getImage('Performance'),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return dbItem(
+                              iconPath: snapshot.data.toString(),
+                              title: 'Performance',
+                              BgColor: Colors.deepOrange,
+                            );
+                          } else {
+                            return Text('Loading');
+                          }
+                        }),
+                    Spacer(
+                      flex: 1,
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 25,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Spacer(
+                      flex: 1,
+                    ),
+                    FutureBuilder(
+                        future: getImage('Travel'),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return dbItem(
+                              iconPath: snapshot.data.toString(),
+                              title: 'Travel',
+                              BgColor: Colors.indigo,
+                            );
+                          } else {
+                            return Text('Loading');
+                          }
+                        }),
+                    Spacer(
+                      flex: 1,
+                    ),
+                    FutureBuilder(
+                        future: getImage('Learning'),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return dbItem(
+                              iconPath: snapshot.data.toString(),
+                              title: 'Learning',
+                              BgColor: Colors.green,
+                            );
+                          } else {
+                            return Text('Loading');
+                          }
+                        }),
+                    Spacer(
+                      flex: 6,
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );

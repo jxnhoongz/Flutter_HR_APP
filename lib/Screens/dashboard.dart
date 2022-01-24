@@ -2,7 +2,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:hr_app/Screens/homePage.dart';
+import 'package:hr_app/Screens/notificationPage.dart';
 import 'package:hr_app/Screens/profilePage.dart';
+import 'package:hr_app/Screens/settingsPage.dart';
 
 import 'package:hr_app/Utilities/appTheme.dart';
 
@@ -15,18 +17,32 @@ class dashboard extends StatefulWidget {
 
 class _dashboardState extends State<dashboard> {
   int _selectedIndex = 0;
-
+  String db_title = 'Dashboard';
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
       print(_selectedIndex);
+      switch (_selectedIndex) {
+        case 1:
+          db_title = 'Notification';
+          break;
+        case 2:
+          db_title = 'Settings';
+          break;
+        case 3:
+          db_title = 'Profile';
+          break;
+        default:
+          db_title = 'Dashboard';
+          break;
+      }
     });
   }
 
   static const List<Widget> _pages = <Widget>[
     homePage(),
-    homePage(),
-    homePage(),
+    notificationPage(),
+    settingPage(),
     profilePage(),
   ];
 
@@ -34,7 +50,7 @@ class _dashboardState extends State<dashboard> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(title: Text('Dashboard')),
+        appBar: AppBar(title: Text(db_title)),
         backgroundColor: purpleHaze,
         bottomNavigationBar: BottomNavigationBar(
           type: BottomNavigationBarType.shifting,
@@ -45,7 +61,7 @@ class _dashboardState extends State<dashboard> {
           currentIndex: _selectedIndex,
           items: <BottomNavigationBarItem>[
             BottomNavigationBarItem(
-              icon: Icon(Icons.person),
+              icon: Icon(Icons.home),
               label: 'Home',
             ),
             BottomNavigationBarItem(
