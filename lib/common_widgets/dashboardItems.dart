@@ -32,7 +32,7 @@ class dbItem extends StatelessWidget {
             break;
           case 'Performance':
             break;
-          case 'Recruitement':
+          case 'Recruitment':
             break;
           case 'Learning':
             break;

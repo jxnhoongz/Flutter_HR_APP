@@ -12,6 +12,8 @@ class profilePage extends StatefulWidget {
 _logout(BuildContext context) async {
   SharedPreferences preferences = await SharedPreferences.getInstance();
   preferences.remove('email');
+  preferences.remove('username');
+  preferences.remove('role');
 
   Navigator.pushAndRemoveUntil(context,
       MaterialPageRoute(builder: (context) => LoginScreen()), (route) => false);

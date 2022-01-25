@@ -13,6 +13,7 @@ void main() async {
   SharedPreferences preferences = await SharedPreferences.getInstance();
   var email = preferences.getString('email');
   isLoggedin = email == null ? false : true;
+  print(email);
   runApp(MyApp());
 }
 

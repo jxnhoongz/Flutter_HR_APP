@@ -4,6 +4,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hr_app/Screens/dashboard.dart';
 import 'package:hr_app/Utilities/appTheme.dart';
 import 'dart:convert';
+
 import 'package:hr_app/Utilities/API.dart';
 import 'package:hr_app/common_widgets/textFieldWidget.dart';
 import 'package:hr_app/common_widgets/buttonWidget.dart';
@@ -26,24 +27,53 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController _passwordController = new TextEditingController();
   bool rememberMe = false;
   bool isLoggedIn = false;
+
+  getModule() async {
+    List<String> modules;
+    Map data = {
+      'empemail': _emailController.text,
+    };
+
+    var body = jsonEncode(data);
+
+    final response = await http.post(Uri.parse(modulePermissions), body: body);
+
+    if (response.statusCode == 202) {
+      modules = jsonDecode(response.body);
+      return modules;
+    } else {
+      return null;
+    }
+  }
+
   login(email, password) async {
     Map data = {
       'empemail': email,
       'password': password,
     };
 
-    var body = jsonEncode(data);
+    Map data2 = {
+      'empemail': email,
+    };
 
+    var body = jsonEncode(data);
+    var body2 = jsonEncode(data2);
     //print(data.toString());
 
     final response = await http.post(Uri.parse(LOGIN), body: body);
+    final response2 = await http.post(Uri.parse(USERNAME), body: body2);
+    final response3 = await http.post(Uri.parse(ROLES), body: body2);
+
+    var username = jsonDecode(response2.body);
+    var roles = jsonDecode(response3.body);
 
     if (response.statusCode == 202) {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       if (rememberMe) {
         preferences.setString('email', _emailController.text);
       }
-
+      preferences.setString('username', username);
+      preferences.setString('role', roles);
       Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (context) => dashboard()),
